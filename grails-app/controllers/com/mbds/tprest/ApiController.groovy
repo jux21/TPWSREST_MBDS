@@ -13,7 +13,7 @@ class ApiController {
         {
             case "POST":
                 if(!Library.get(params.library.id)) {
-                    render(status: 400, text: "Cannot attach a book to a non existant library (${param.library.id})")
+                    render(status: 400, text: "Cannot attach a book to a non existant library (${params.library.id})")
                     return
                 }
                 def bookInstance = new Book(params)
@@ -28,6 +28,30 @@ class ApiController {
                 break;
 
 
+            case "GET":
+                if(!Book.get(params.id)) {
+                    //render(status: 400, text: "Cannot find the book ${params.book.id} in Library (${params.library.id})\n")
+                    render(status: 400, text: "Cannot find the book ${params.id}\n")
+                    return
+                }
+                else {
+                    Book bookInstance = Book.get(params.id)
+                    def responseStatus = 200
+                    switch (request.getHeader("Accept"))
+                    {
+                        case "application/json":
+                            render(status: responseStatus, bookInstance as JSON)
+                            break
+                        case "application/xml":
+                            render(status: responseStatus, bookInstance as XML)
+                            break
+                        default:
+                            render(status: responseStatus, bookInstance as JSON)
+                            break
+                    }
+                }
+                break;
+
             default:
                 response.status = 405
                 break;
@@ -40,7 +64,7 @@ class ApiController {
         {
             case "POST":
                 if(!Library.get(params.library.id)) {
-                    render(status: 400, text: "Cannot find the library (${param.library.id})")
+                    render(status: 400, text: "Cannot find the library (${params.library.id})")
                     return
                 }
                 def libraryInstance = new Library(params)
