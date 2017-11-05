@@ -218,5 +218,30 @@ class ApiController {
         }
     }
 
-   
+    def bookInLibrary() {
+        
+        switch(request.getMethod())
+        {
+            case "GET":
+                List<Book> BooksInLibInstances = Library.findById(params.idLib).getBooks().sort{ it.id }
+                Book BookInstance = BooksInLibInstances.getAt(params.idBook as int)
+                def responseStatus = 200
+                switch (request.getHeader("Accept"))
+                {
+                    case "application/json":
+                        render(status: responseStatus, BookInstance as JSON)
+                        break
+                    case "application/xml":
+                        render(status: responseStatus, BookInstance as XML)
+                        break
+                    default:
+                        render(status: responseStatus, BookInstance as JSON)
+                        break
+                }
+
+            default:
+                response.status = 405
+                break;
+        }
+    }
 }
