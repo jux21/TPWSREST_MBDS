@@ -64,10 +64,10 @@ class ApiController {
                     def responseStatus = 200
                     switch (request.getHeader("Accept"))
                     {
-                        case "json":
+                        case "application/json":
                             render(status: responseStatus, libraryInstance as JSON)
                             break
-                        case "xml":
+                        case "application/xml":
                             render(status: responseStatus, libraryInstance as XML)
                             break
                         default:
