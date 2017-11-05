@@ -106,4 +106,117 @@ class ApiController {
                 break;
         }
     }
+
+
+    def libraries() {
+
+        switch(request.getMethod())
+        {
+            case "POST":
+                if(!Library.get(params.library.id)) {
+                    render(status: 400, text: "Cannot find the library (${params.library.id})")
+                    return
+                }
+                def libraryInstance = new Library(params)
+                if(libraryInstance.save(flush:true))
+                {
+                    response.status = 201
+                }
+                else
+                {
+                    response.status = 400
+                }
+                break;
+
+            case "GET":
+                List<Library> librariesInstances = Library.getAll()
+                def responseStatus = 200
+                switch (request.getHeader("Accept"))
+                {
+                    case "application/json":
+                        render(status: responseStatus, librariesInstances as JSON)
+                        break
+                    case "application/xml":
+                        render(status: responseStatus, librariesInstances as XML)
+                        break
+                    default:
+                        render(status: responseStatus, librariesInstances as JSON)
+                        break
+                }
+
+            default:
+                response.status = 405
+                break;
+        }
+    }
+
+    def books() {
+
+        switch(request.getMethod())
+        {
+            case "POST":
+                if(!Library.get(params.library.id)) {
+                    render(status: 400, text: "Cannot find the library (${params.library.id})")
+                    return
+                }
+                def libraryInstance = new Library(params)
+                if(libraryInstance.save(flush:true))
+                {
+                    response.status = 201
+                }
+                else
+                {
+                    response.status = 400
+                }
+                break;
+
+            case "GET":
+                List<Book> BooksInstances = Book.getAll()
+                def responseStatus = 200
+                switch (request.getHeader("Accept"))
+                {
+                    case "application/json":
+                        render(status: responseStatus, BooksInstances as JSON)
+                        break
+                    case "application/xml":
+                        render(status: responseStatus, BooksInstances as XML)
+                        break
+                    default:
+                        render(status: responseStatus, BooksInstances as JSON)
+                        break
+                }
+
+            default:
+                response.status = 405
+                break;
+        }
+    }
+
+    def booksInLibrary() {
+
+        switch(request.getMethod())
+        {
+            case "GET":
+                Set<Book> BooksInLibInstances = Library.findById(params.idLib).getBooks()
+                def responseStatus = 200
+                switch (request.getHeader("Accept"))
+                {
+                    case "application/json":
+                        render(status: responseStatus, BooksInLibInstances as JSON)
+                        break
+                    case "application/xml":
+                        render(status: responseStatus, BooksInLibInstances as XML)
+                        break
+                    default:
+                        render(status: responseStatus, BooksInLibInstances as JSON)
+                        break
+                }
+
+            default:
+                response.status = 405
+                break;
+        }
+    }
+
+   
 }
