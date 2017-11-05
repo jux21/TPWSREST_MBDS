@@ -219,23 +219,30 @@ class ApiController {
     }
 
     def bookInLibrary() {
-        
+
         switch(request.getMethod())
         {
             case "GET":
-                List<Book> BooksInLibInstances = Library.findById(params.idLib).getBooks().sort{ it.id }
-                Book BookInstance = BooksInLibInstances.getAt(params.idBook as int)
+                if(!Library.get(params.idLib)) {
+                    render(status: 404, text: "Cannot get a book from a non existant library (${params.idLib})\n")
+                    return
+                }
+                if(!Library.get(params.idLib).getBooks().sort{ it.id }.getAt(params.idBook as int)) {
+                    render(status: 404, text: "Non existant book (${params.idBook}) in library (${params.idLib})\n")
+                    return
+                }
+                Book BookInLibInstance = Library.get(params.idLib).getBooks().sort{ it.id }.getAt(params.idBook as int)
                 def responseStatus = 200
                 switch (request.getHeader("Accept"))
                 {
                     case "application/json":
-                        render(status: responseStatus, BookInstance as JSON)
+                        render(status: responseStatus, BookInLibInstance as JSON)
                         break
                     case "application/xml":
-                        render(status: responseStatus, BookInstance as XML)
+                        render(status: responseStatus, BookInLibInstance as XML)
                         break
                     default:
-                        render(status: responseStatus, BookInstance as JSON)
+                        render(status: responseStatus, BookInLibInstance as JSON)
                         break
                 }
 
