@@ -68,7 +68,7 @@ class ApiController {
                 Library.get(params.library.id).addToBooks(book)
                 if(book.save(flush:true))
                 {
-                    render(status: 201, text: "Book "+book.getId()+" updated in library "+params.library.id+"\n")
+                    render(status: 200, text: "Book "+book.getId()+" updated in library "+params.library.id+"\n")
                 }
                 else
                 {
@@ -145,7 +145,7 @@ class ApiController {
                 library.setYearCreated(params.yearCreated as int)
                 if(library.save(flush:true))
                 {
-                    render(status: 201, text: "Library "+params.id+" updated\n")
+                    render(status: 200, text: "Library "+params.id+" updated\n")
                 }
                 else
                 {
@@ -291,22 +291,22 @@ class ApiController {
                 break
             case "POST":
                 if(!Library.get(params.idLib)) {
-                    render(status: 404, text: "Cannot get a book from a non existant library (${params.idLib})\n")
+                    render(status: 404, text: "Cannot set a book to a non existant library "+params.idLib+"\n")
                     return
                 }
                 if(Library.get(params.idLib).getBooks().sort{ it.id }.getAt(params.idBook as int)) {
-                    render(status: 404, text: "Book (${params.idBook}) already exists in library (${params.idLib})\n")
+                    render(status: 404, text: "Book "+params.idBook+" already exists in library "+params.idLib+"\n")
                     return
                 }
                 def bookInstance = new Book(params)
                 Library.get(params.idLib).addToBooks(bookInstance)
                 if(bookInstance.save(flush:true))
                 {
-                    render(status: 201, text: "Book (${params.idBook}) created in library (${params.idLib})\n")
+                    render(status: 201, text: "Book "+params.idBook+" created in library "+params.idLib+"\n")
                 }
                 else
                 {
-                    render(status: 400, text: "Book (${params.idBook}) not created in library (${params.idLib})\n")
+                    render(status: 400, text: "Book "+params.idBook+" not created in library "+params.idLib+"\n")
                 }
                 break;
 

@@ -1,0 +1,35 @@
+Bookobtention du book avec l’id numéro 1. retour : le book en JSON ou XML en fonction du header (JSON par défaut) et code 400 ou 200.curl -X GET -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/book/1soumission d’un nouveau book dans une library. retour : code 400 ou 201.curl -X POST -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/book -d "name=newBook&releaseDate=2017-04-01T22:00:00Z&isbn=666&author=JCVD&library.id=2"mise à jour d’un book. retour : code 400 ou 200.curl -X PUT -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/book/5 -d "name=bookUpdated&releaseDate=2015-04-22&isbn=9878&author=Gard&library.id=1"suppression en cascade d’un book. retour : code 400 ou 200.curl -X DELETE -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/book/2
+
+Books
+
+obtention de tous les books. retour : tous les books en JSON ou XML en fonction du header (JSON par défaut) et code 200.
+curl -X GET -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/books
+
+suppression en cascade de tous les books. retour : code 200.
+curl -X DELETE -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/booksLibraryobtention de la librairie avec l’id numéro 1. retour : la librairie en JSON ou XML en fonction du header (JSON par défaut) et code 400 ou 200.curl -X GET -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/library/1soumission d’une nouvelle library. retour : code 400 ou 201.curl -X POST -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/library -d "name=newBiblio&address=Liban Street&yearCreated=1999"
+mise à jour d’une library. retour : code 400 ou 200.curl -X PUT -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/library/3 -d "name=libUpdated&address=Alesia street&yearCreated=1945"suppression en cascade d’une library. retour : code 400 ou 200.curl -X DELETE -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/library/2
+
+
+Libraries
+
+obtention de toutes les librairies. retour : toutes les librairies en JSON ou XML en fonction du header (JSON par défaut) et code 405 ou 200.
+curl -X GET -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/libraries
+
+suppression en cascade de toutes les libraries. retour : code 405 ou 200.
+curl -X DELETE -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/librariesBooks in library
+
+obtention de tous les books d’une library. retour : tous les books de la library en JSON ou XML en fonction du header (JSON par défaut) et code 405 ou 200.
+curl -X GET -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/library/1/books
+
+
+Book in library
+
+obtention d’un book en particulier d’une library. retour : un book de la library en JSON ou XML en fonction du header (JSON par défaut) et code 404 ou 200.
+curl -X GET -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/library/1/book/1
+
+ajout d’un book dans une library. retour : code 404, 400 ou 201.
+curl -X POST -H "Accept: application/json"  http://localhost:8081/tpwsrest/api/library/2/book/10 -d "name=newBook&releaseDate=2017-04-01T22:00:00Z&isbn=666&author=JCVD&library.id=2"
+
+
+
+
