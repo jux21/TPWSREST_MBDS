@@ -82,9 +82,8 @@ class ApiController {
                     return
                 }
                 else {
-                    def responseStatus = 200
                     Book.get(params.id).delete(flush:true)
-                    render(status: 201, text: "Book "+params.id+" deleted\n")
+                    render(status: 200, text: "Book "+params.id+" deleted\n")
                     break;
                 }
                 break;
@@ -134,6 +133,38 @@ class ApiController {
                 }
                 break;
 
+            case "PUT":
+                if(!Library.get(params.id)) {
+                    render(status: 400, text: "Cannot find the library "+params.id+"\n")
+                    return
+                }
+
+                Library library = Library.findAllById(params.id).get(0)
+                library.setName(params.name)
+                library.setAddress(params.address)
+                library.setYearCreated(params.yearCreated as int)
+                if(library.save(flush:true))
+                {
+                    render(status: 201, text: "Library "+params.id+" updated\n")
+                }
+                else
+                {
+                    render(status: 400, text: "Library "+params.id+" not updated\n")
+                }
+                break;
+
+            case "DELETE":
+                if(!Library.get(params.id)) {
+                    render(status: 400, text: "Cannot find the library "+params.id+"\n")
+                    return
+                }
+                else {
+                    Library.get(params.id).delete(flush:true)
+                    render(status: 200, text: "library "+params.id+" deleted\n")
+                    break;
+                }
+                break;
+
             default:
                 response.status = 405
                 break;
@@ -145,21 +176,10 @@ class ApiController {
 
         switch(request.getMethod())
         {
-            case "POST":
-                if(!Library.get(params.library.id)) {
-                    render(status: 400, text: "Cannot find the library "+params.library.id+"\n")
-                    return
-                }
-                def libraryInstance = new Library(params)
-                if(libraryInstance.save(flush:true))
-                {
-                    response.status = 201
-                }
-                else
-                {
-                    response.status = 400
-                }
-                break;
+            case "DELETE":
+                Library.findAll().each { it.delete(flush: true) }
+                render(status: 200, text: "All libraries deleted\n")
+            break;
 
             case "GET":
                 List<Library> librariesInstances = Library.getAll()
@@ -187,21 +207,10 @@ class ApiController {
 
         switch(request.getMethod())
         {
-            case "POST":
-                if(!Library.get(params.library.id)) {
-                    render(status: 400, text: "Cannot find the library (${params.library.id})")
-                    return
-                }
-                def libraryInstance = new Library(params)
-                if(libraryInstance.save(flush:true))
-                {
-                    response.status = 201
-                }
-                else
-                {
-                    response.status = 400
-                }
-                break;
+            case "DELETE":
+                Book.findAll().each { it.delete(flush: true) }
+                render(status: 200, text: "All books deleted\n")
+            break;
 
             case "GET":
                 List<Book> BooksInstances = Book.getAll()
@@ -244,6 +253,7 @@ class ApiController {
                         render(status: responseStatus, BooksInLibInstances as JSON)
                         break
                 }
+
 
             default:
                 response.status = 405
