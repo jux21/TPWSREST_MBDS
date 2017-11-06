@@ -2,36 +2,37 @@ package com.mbds.tprest
 
 import grails.converters.JSON
 import grails.converters.XML
+import grails.gorm.transactions.Transactional
 
 class ApiController {
 
     def index() { }
 
+    @Transactional
     def book() {
 
         switch(request.getMethod())
         {
             case "POST":
                 if(!Library.get(params.library.id)) {
-                    render(status: 400, text: "Cannot attach a book to a non existant library (${params.library.id})")
+                    render(status: 400, text: "Cannot attach a book to a non existant library "+params.library.id+"\n")
                     return
                 }
                 def bookInstance = new Book(params)
-                if(bookInstance.save(flush:true))
+                if(Library.get(params.library.id).addToBooks(bookInstance).save(flush:true))
                 {
-                    response.status = 201
+                    render(status: 201, text: "Book "+bookInstance.getId()+" created in library "+params.library.id+"\n")
                 }
                 else
                 {
-                    response.status = 400
+                    render(status: 400, text: "Book not created in library "+params.library.id+"\n")
                 }
                 break;
 
 
             case "GET":
                 if(!Book.get(params.id)) {
-                    //render(status: 400, text: "Cannot find the book ${params.book.id} in Library (${params.library.id})\n")
-                    render(status: 400, text: "Cannot find the book ${params.id}\n")
+                    render(status: 400, text: "Cannot find the book "+params.id+"\n")
                     return
                 }
                 else {
@@ -52,6 +53,42 @@ class ApiController {
                 }
                 break;
 
+            case "PUT":
+                if(!Library.get(params.library.id)) {
+                    render(status: 400, text: "Cannot alter a book to a non existant library "+params.library.id+"\n")
+                    return
+                }
+
+                Book book = Book.findAllById(params.id).get(0)
+                book.setName(params.name)
+                book.setIsbn(params.isbn)
+                book.setReleaseDate(Date.parse("yyyy-MM-dd", params.releaseDate))
+                book.setAuthor(params.author)
+                Library.get(params.library.id).removeFromBooks(book)
+                Library.get(params.library.id).addToBooks(book)
+                if(book.save(flush:true))
+                {
+                    render(status: 201, text: "Book "+book.getId()+" updated in library "+params.library.id+"\n")
+                }
+                else
+                {
+                    render(status: 400, text: "Book not updated in library "+params.library.id+"\n")
+                }
+                break;
+
+            case "DELETE":
+                if(!Book.get(params.id)) {
+                    render(status: 400, text: "Cannot find the book "+params.id+"\n")
+                    return
+                }
+                else {
+                    def responseStatus = 200
+                    Book.get(params.id).delete(flush:true)
+                    render(status: 201, text: "Book "+params.id+" deleted\n")
+                    break;
+                }
+                break;
+
             default:
                 response.status = 405
                 break;
@@ -63,18 +100,14 @@ class ApiController {
         switch(request.getMethod())
         {
             case "POST":
-                if(!Library.get(params.library.id)) {
-                    render(status: 400, text: "Cannot find the library (${params.library.id})")
-                    return
-                }
                 def libraryInstance = new Library(params)
                 if(libraryInstance.save(flush:true))
                 {
-                    response.status = 201
+                    render(status: 201, text: "Library "+libraryInstance.getId()+" created\n")
                 }
                 else
                 {
-                    response.status = 400
+                    render(status: 400, text: "Library not created\n")
                 }
                 break;
 
@@ -114,7 +147,7 @@ class ApiController {
         {
             case "POST":
                 if(!Library.get(params.library.id)) {
-                    render(status: 400, text: "Cannot find the library (${params.library.id})")
+                    render(status: 400, text: "Cannot find the library "+params.library.id+"\n")
                     return
                 }
                 def libraryInstance = new Library(params)
@@ -245,6 +278,27 @@ class ApiController {
                         render(status: responseStatus, BookInLibInstance as JSON)
                         break
                 }
+                break
+            case "POST":
+                if(!Library.get(params.idLib)) {
+                    render(status: 404, text: "Cannot get a book from a non existant library (${params.idLib})\n")
+                    return
+                }
+                if(Library.get(params.idLib).getBooks().sort{ it.id }.getAt(params.idBook as int)) {
+                    render(status: 404, text: "Book (${params.idBook}) already exists in library (${params.idLib})\n")
+                    return
+                }
+                def bookInstance = new Book(params)
+                Library.get(params.idLib).addToBooks(bookInstance)
+                if(bookInstance.save(flush:true))
+                {
+                    render(status: 201, text: "Book (${params.idBook}) created in library (${params.idLib})\n")
+                }
+                else
+                {
+                    render(status: 400, text: "Book (${params.idBook}) not created in library (${params.idLib})\n")
+                }
+                break;
 
             default:
                 response.status = 405

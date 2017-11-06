@@ -7,7 +7,7 @@ class Book {
     String isbn;
     String author;
 
-    static belongsTo = [Library]
+    static belongsTo = [library:Library]
 
     static constraints = {
         name blank : false

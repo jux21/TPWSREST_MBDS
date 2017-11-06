@@ -13,4 +13,8 @@ class Library {
         address blank : false
         yearCreated nullable : false
     }
+
+    static mapping = {
+        books cascade: "all-delete-orphan"
+    }
 }
