@@ -32,7 +32,7 @@ class ApiController {
 
             case "GET":
                 if(!Book.get(params.id)) {
-                    render(status: 400, text: "Cannot find the book "+params.id+"\n")
+                    render(status: 404, text: "Cannot find the book "+params.id+"\n")
                     return
                 }
                 else {
@@ -78,7 +78,7 @@ class ApiController {
 
             case "DELETE":
                 if(!Book.get(params.id)) {
-                    render(status: 400, text: "Cannot find the book "+params.id+"\n")
+                    render(status: 404, text: "Cannot find the book "+params.id+"\n")
                     return
                 }
                 else {
@@ -89,7 +89,7 @@ class ApiController {
                 break;
 
             default:
-                response.status = 405
+                render(status: 400, text: "Bad request\n")
                 break;
         }
     }
@@ -112,7 +112,7 @@ class ApiController {
 
             case "GET":
                 if(!Library.get(params.id)) {
-                    render(status: 400, text: "Cannot find the library "+params.id+"\n")
+                    render(status: 404, text: "Cannot find the library "+params.id+"\n")
                     return
                 }
                 else {
@@ -135,7 +135,7 @@ class ApiController {
 
             case "PUT":
                 if(!Library.get(params.id)) {
-                    render(status: 400, text: "Cannot find the library "+params.id+"\n")
+                    render(status: 404, text: "Cannot find the library "+params.id+"\n")
                     return
                 }
 
@@ -155,7 +155,7 @@ class ApiController {
 
             case "DELETE":
                 if(!Library.get(params.id)) {
-                    render(status: 400, text: "Cannot find the library "+params.id+"\n")
+                    render(status: 404, text: "Cannot find the library "+params.id+"\n")
                     return
                 }
                 else {
@@ -166,7 +166,7 @@ class ApiController {
                 break;
 
             default:
-                response.status = 405
+                render(status: 400, text: "Bad request\n")
                 break;
         }
     }
@@ -198,7 +198,7 @@ class ApiController {
                 }
 
             default:
-                response.status = 405
+                render(status: 400, text: "Bad request\n")
                 break;
         }
     }
@@ -229,7 +229,7 @@ class ApiController {
                 }
 
             default:
-                response.status = 405
+                render(status: 400, text: "Bad request\n")
                 break;
         }
     }
@@ -239,6 +239,10 @@ class ApiController {
         switch(request.getMethod())
         {
             case "GET":
+                if(!Library.get(params.idLib)) {
+                    render(status: 404, text: "Cannot find the library "+params.idLib+"\n")
+                    return
+                }
                 Set<Book> BooksInLibInstances = Library.findById(params.idLib).getBooks()
                 def responseStatus = 200
                 switch (request.getHeader("Accept"))
@@ -256,7 +260,7 @@ class ApiController {
 
 
             default:
-                response.status = 405
+                render(status: 400, text: "Bad request\n")
                 break;
         }
     }
@@ -267,11 +271,11 @@ class ApiController {
         {
             case "GET":
                 if(!Library.get(params.idLib)) {
-                    render(status: 404, text: "Cannot get a book from a non existant library (${params.idLib})\n")
+                    render(status: 404, text: "Cannot get a book from a non existant library "+params.idLib+"\n")
                     return
                 }
                 if(!Library.get(params.idLib).getBooks().sort{ it.id }.getAt(params.idBook as int)) {
-                    render(status: 404, text: "Non existant book (${params.idBook}) in library (${params.idLib})\n")
+                    render(status: 404, text: "Non existant book "+params.idBook+" in library "+params.idLib+"\n")
                     return
                 }
                 Book BookInLibInstance = Library.get(params.idLib).getBooks().sort{ it.id }.getAt(params.idBook as int)
@@ -311,7 +315,7 @@ class ApiController {
                 break;
 
             default:
-                response.status = 405
+                render(status: 400, text: "Bad request\n")
                 break;
         }
     }
